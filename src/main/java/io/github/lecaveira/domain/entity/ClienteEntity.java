@@ -1,6 +1,7 @@
 package io.github.lecaveira.domain.entity;
 
 import javax.persistence.*;
+import java.util.Set;
 
 @Entity
 @Table(name  = "cliente")
@@ -13,7 +14,18 @@ public class ClienteEntity {
     @Column(name = "nome", length = 100)
     private String nome;
 
+    @OneToMany(mappedBy = "cliente")
+    private Set<PedidoEntity> pedidos;
+
     public ClienteEntity() {
+    }
+
+    public Set<PedidoEntity> getPedidos() {
+        return pedidos;
+    }
+
+    public void setPedidos(Set<PedidoEntity> pedidos) {
+        this.pedidos = pedidos;
     }
 
     public ClienteEntity(String nome) {

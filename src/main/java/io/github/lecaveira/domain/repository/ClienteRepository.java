@@ -1,64 +1,22 @@
 package io.github.lecaveira.domain.repository;
 
 import io.github.lecaveira.domain.entity.ClienteEntity;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
-import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 
-import javax.persistence.EntityManager;
-import javax.persistence.TypedQuery;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 
-@Repository
-public class ClienteRepository {
+public interface ClienteRepository extends JpaRepository<ClienteEntity, Integer> {
 
-    @Autowired
-    private EntityManager entityManager;
+    List<ClienteEntity> findByNome(String nome);
 
-    @Transactional
-    public ClienteEntity salvar(ClienteEntity cliente){
+    List<ClienteEntity> findByNomeOrId(String nome, Integer id);
 
-        entityManager.persist(cliente);
-        return cliente;
+    boolean existsByNome(String nome);
 
-    }
-
-    @Transactional
-    public ClienteEntity atualizar(ClienteEntity cliente){
-
-        entityManager.merge(cliente);
-        return cliente;
-    }
-
-    @Transactional
-    public void deletar(ClienteEntity cliente){
-        if(!entityManager.contains(cliente)){
-            cliente = entityManager.merge(cliente);
-        }
-        entityManager.remove(cliente);
-    }
-
-    @Transactional
-    public void deletar(Integer id){
-        ClienteEntity cliente= entityManager.find(ClienteEntity.class, id);
-        deletar(cliente);
-    }
-
-    @Transactional(readOnly = true)
-    public List<ClienteEntity> buscarNome(String nome){
-        String jpql = "select c from Cliente c where c.nome = :nome";
-        TypedQuery<ClienteEntity> query = entityManager.createQuery(jpql, ClienteEntity.class);
-        query.setParameter("nome", "%" + nome + "%");
-        return query.getResultList();
-    }
-
-    @Transactional
-    public List<ClienteEntity> obterTodos(){
-        return entityManager.createQuery("from Cliente", ClienteEntity.class).getResultList();
-    }
+    @Query("delete from Cliente c where c.nome =:nome")
+    @Modifying
+    void deleteByNome(String nome);
 
 }
