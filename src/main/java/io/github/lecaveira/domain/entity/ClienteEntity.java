@@ -14,7 +14,7 @@ public class ClienteEntity {
     @Column(name = "nome", length = 100)
     private String nome;
 
-    @OneToMany(mappedBy = "cliente")
+    @OneToMany(mappedBy = "cliente", fetch = FetchType.LAZY)
     private Set<PedidoEntity> pedidos;
 
     public ClienteEntity() {
